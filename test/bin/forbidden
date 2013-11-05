@@ -1,0 +1,29 @@
+#!/usr/bin/awk -f
+
+BEGIN {
+    find="find . -name '*.erl'"
+    while ((find | getline ARGV[ARGC++]) > 0) {}
+    close(find)
+}
+
+$0 ~ pattern {
+    occurences[FILENAME]++
+    lines[FILENAME]=lines[FILENAME] "line " FNR ": " $0 "\n" 
+}
+
+END {
+    PROCINFO["sorted_in"]="@ind_str_asc"
+    # This loop only runs once because of the exit at the end
+    for (x in occurences) {
+        print "##############################################"
+        print text
+        print "##############################################"
+        for (a in occurences) {
+            print a
+            print "----------------------------------------------"
+            printf "%s", lines[a]
+        }
+        print "##############################################"
+        exit 1
+    }
+}
